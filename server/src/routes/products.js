@@ -36,6 +36,46 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
 
+
+
+// Export products to CSV
+router.get('/export', async (req, res) => {
+  try {
+    // Fetch all products
+    const products = await db.all('SELECT * FROM products');
+    console.log("!!!!!");
+    // Set response headers for CSV download
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="products-export-${Date.now()}.csv"`);
+    
+    // Write CSV header
+    res.write('id,name,description,category,price,quantity,created_at,updated_at\n');
+    
+    // Write product rows
+    products.forEach(product => {
+      // Clean and escape fields (simple approach)
+      const row = [
+        product.id,
+        `"${escapeCsvValue(product.name)}"`,
+        `"${escapeCsvValue(product.description || '')}"`,
+        `"${escapeCsvValue(product.category || '')}"`,
+        product.price,
+        product.quantity,
+        product.created_at,
+        product.updated_at
+      ].join(',');
+      
+      res.write(row + '\n');
+    });
+    
+    res.end();
+    logger.info(`Products exported to CSV (${products.length} records)`);
+  } catch (err) {
+    logger.error('Error exporting products to CSV:', err);
+    res.status(500).json({ error: 'Server error during export', details: err.message });
+  }
+});
+
 // Get all products with pagination, sorting, and filters
 router.get('/', async (req, res) => {
   try {
@@ -389,44 +429,6 @@ router.post('/bulk-import', upload.single('file'), async (req, res) => {
     }
     logger.error('Error processing bulk import:', err);
     res.status(500).json({ error: 'Server error during bulk import', details: err.message });
-  }
-});
-
-// Export products to CSV
-router.get('/export', async (req, res) => {
-  try {
-    // Fetch all products
-    const products = await db.all('SELECT * FROM products');
-    
-    // Set response headers for CSV download
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', `attachment; filename="products-export-${Date.now()}.csv"`);
-    
-    // Write CSV header
-    res.write('id,name,description,category,price,quantity,created_at,updated_at\n');
-    
-    // Write product rows
-    products.forEach(product => {
-      // Clean and escape fields (simple approach)
-      const row = [
-        product.id,
-        `"${escapeCsvValue(product.name)}"`,
-        `"${escapeCsvValue(product.description || '')}"`,
-        `"${escapeCsvValue(product.category || '')}"`,
-        product.price,
-        product.quantity,
-        product.created_at,
-        product.updated_at
-      ].join(',');
-      
-      res.write(row + '\n');
-    });
-    
-    res.end();
-    logger.info(`Products exported to CSV (${products.length} records)`);
-  } catch (err) {
-    logger.error('Error exporting products to CSV:', err);
-    res.status(500).json({ error: 'Server error during export', details: err.message });
   }
 });
 
