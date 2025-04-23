@@ -134,7 +134,7 @@ const ProductDetail = () => {
   };
 
   // Default image if no product image is available
-  const defaultImage = "https://via.placeholder.com/400x300?text=No+Image+Available";
+  const defaultImage = "https://placehold.co/400x300?text=No+Image+Available";
 
   // Quantity status configuration
   const getQuantityStatus = (qty) => {
