@@ -4,8 +4,8 @@
 /server/node_modules
 /server/uploads/*
 # Production
-/build
-/client/build
+# /build
+# /client/build
 
 # Database
 *.db
