@@ -364,19 +364,39 @@ router.post('/bulk-import', upload.single('file'), async (req, res) => {
   let successCount = 0;
 
   try {
+    logger.info(`Processing CSV file: ${req.file.originalname}, size: ${req.file.size} bytes`);
+    
+    // Check if file exists and is readable
+    if (!fs.existsSync(req.file.path)) {
+      throw new Error('Uploaded file not found on disk');
+    }
+    
     // Process CSV file
     await new Promise((resolve, reject) => {
       fs.createReadStream(req.file.path)
-        .pipe(csv())
-        .on('data', async (data) => {
+        .on('error', (err) => {
+          logger.error('Error reading CSV file stream:', err);
+          reject(new Error(`Error reading file: ${err.message}`));
+        })
+        .pipe(csv({
+          mapValues: ({ header, value }) => value.trim() // Trim whitespace from all values
+        }))
+        .on('data', (data) => {
           rowCount++;
           
-          // Validate row data
-          if (!data.name || isNaN(data.price) || isNaN(data.quantity)) {
-            errors.push({
-              row: rowCount,
-              error: 'Missing required fields or invalid data types'
-            });
+          // Validate row data and log specific issues
+          if (!data.name) {
+            errors.push({ row: rowCount, error: 'Product name is required' });
+            return;
+          }
+          
+          if (isNaN(parseFloat(data.price))) {
+            errors.push({ row: rowCount, error: `Invalid price value: ${data.price}` });
+            return;
+          }
+          
+          if (isNaN(parseInt(data.quantity))) {
+            errors.push({ row: rowCount, error: `Invalid quantity value: ${data.quantity}` });
             return;
           }
           
@@ -389,10 +409,19 @@ router.post('/bulk-import', upload.single('file'), async (req, res) => {
             quantity: parseInt(data.quantity)
           });
         })
-        .on('end', resolve)
-        .on('error', reject);
+        .on('end', () => {
+          logger.info(`CSV parsing complete. ${rowCount} rows processed, ${products.length} valid products found`);
+          resolve();
+        })
+        .on('error', (err) => {
+          logger.error('Error parsing CSV:', err);
+          reject(new Error(`CSV parsing error: ${err.message}`));
+        });
     });
 
+    // Log the data before database insertion
+    logger.info(`Attempting to insert ${products.length} products into database`);
+    
     // Insert valid products
     for (const product of products) {
       try {
@@ -423,7 +452,7 @@ router.post('/bulk-import', upload.single('file'), async (req, res) => {
     });
   } catch (err) {
     // Clean up uploaded file in case of error
-    if (fs.existsSync(req.file.path)) {
+    if (req.file && req.file.path && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }
     logger.error('Error processing bulk import:', err);

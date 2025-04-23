@@ -24,9 +24,23 @@ const apiLimiter = rateLimit({
   }
 });
 
+// Enhanced CORS configuration
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow all origins
+    callback(null, true);
+  },
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
+};
+
 // Apply middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // Add this to handle URL-encoded form data
 
 // Apply rate limiting to all API requests
 app.use('/api', apiLimiter);
