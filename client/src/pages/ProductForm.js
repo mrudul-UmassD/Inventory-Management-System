@@ -91,7 +91,7 @@ const ProductForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    category: '',
+    category: 'None',
     price: '',
     quantity: '',
     image: null
@@ -102,6 +102,7 @@ const ProductForm = () => {
   const [initialLoading, setInitialLoading] = useState(isEditMode);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [customCategory, setCustomCategory] = useState('');
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -121,7 +122,7 @@ const ProductForm = () => {
         try {
           const res = await axios.get(`/api/products/${id}`);
           const { name, description, category, price, quantity, image_url } = res.data;
-          
+
           setFormData({
             name,
             description: description || '',
@@ -130,12 +131,12 @@ const ProductForm = () => {
             quantity: quantity.toString(),
             image: null
           });
-          
+
           // Set image preview if product has an image
           if (image_url) {
             setImagePreview(image_url);
           }
-          
+
           setError(null);
         } catch (err) {
           console.error('Error fetching product:', err);
@@ -155,6 +156,23 @@ const ProductForm = () => {
       ...prevState,
       [name]: value
     }));
+  };
+
+  const handleCategoryChange = (e) => {
+    const value = e.target.value;
+    if (value === 'custom') {
+      setCustomCategory('custom');
+      setFormData(prevState => ({
+        ...prevState,
+        category: ''
+      }));
+    } else {
+      setCustomCategory('');
+      setFormData(prevState => ({
+        ...prevState,
+        category: value
+      }));
+    }
   };
 
   const handleImageChange = (e) => {
@@ -208,7 +226,7 @@ const ProductForm = () => {
       submitData.append('category', formData.category);
       submitData.append('price', parseFloat(formData.price));
       submitData.append('quantity', parseInt(formData.quantity));
-      
+
       // Only append image if a new one was selected
       if (formData.image) {
         submitData.append('image', formData.image);
@@ -244,10 +262,10 @@ const ProductForm = () => {
 
   if (initialLoading) {
     return (
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         minHeight: '60vh',
         flexDirection: 'column',
         gap: 2
@@ -274,40 +292,37 @@ const ProductForm = () => {
             >
               Back to Products
             </Button>
-            
+
             <Typography variant="h4" component="h1" fontWeight={700} gutterBottom>
               {isEditMode ? 'Edit Product' : 'Add New Product'}
             </Typography>
-            
+
             <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
-              {isEditMode 
-                ? 'Update the product information below' 
+              {isEditMode
+                ? 'Update the product information below'
                 : 'Fill in the details to add a new product to inventory'}
             </Typography>
           </Box>
-          
+
           {error && (
             <Alert severity="error" sx={{ mb: 3 }} variant="filled">
               {error}
             </Alert>
           )}
-          
+
           {success && (
             <Alert severity="success" sx={{ mb: 3 }} variant="filled">
               {success}
             </Alert>
           )}
-          
+
           <form onSubmit={handleSubmit}>
             <StyledPaper elevation={3}>
+              <Typography variant="h6" fontWeight={600} gutterBottom>
+                Basic Information
+              </Typography>
+              <Divider sx={{ mb: 2 }} />
               <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <Typography variant="h6" fontWeight={600} gutterBottom>
-                    Basic Information
-                  </Typography>
-                  <Divider sx={{ mb: 2 }} />
-                </Grid>
-                
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
@@ -319,30 +334,51 @@ const ProductForm = () => {
                     variant="outlined"
                   />
                 </Grid>
-                
+
                 <Grid item xs={12} sm={6}>
                   <FormControl fullWidth>
                     <InputLabel id="category-label">Category</InputLabel>
                     <Select
                       labelId="category-label"
                       name="category"
-                      value={formData.category}
-                      onChange={handleChange}
+                      value={customCategory === 'custom' ? 'custom' : formData.category}
+                      onChange={handleCategoryChange}
                       label="Category"
                     >
-                      <MenuItem value="">
+                      <MenuItem value="None">
                         <em>None</em>
                       </MenuItem>
-                      {categories.map((category, index) => (
-                        <MenuItem key={index} value={category}>
-                          {category}
-                        </MenuItem>
-                      ))}
+                      {categories.map((category, index) => {
+                        if (category !== "None")
+                          return (
+                            <MenuItem key={index} value={category}>
+                              {category}
+                            </MenuItem>
+                          )
+                      })}
+                      <MenuItem value="custom">Add your own</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
-                
-                <Grid item xs={12} sm={6}>
+
+                {customCategory === 'custom' && (
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      required
+                      label="Custom Category"
+                      name="customCategory"
+                      value={formData.category}
+                      onChange={(e) => setFormData(prevState => ({
+                        ...prevState,
+                        category: e.target.value
+                      }))}
+                      variant="outlined"
+                    />
+                  </Grid>
+                )}
+
+                <Grid item size={8} xs={12} sm={6}>
                   <TextField
                     fullWidth
                     required
@@ -362,8 +398,8 @@ const ProductForm = () => {
                     }}
                   />
                 </Grid>
-                
-                <Grid item xs={12} sm={6}>
+
+                <Grid item size={4} xs={12} sm={6}>
                   <TextField
                     fullWidth
                     required
@@ -378,8 +414,8 @@ const ProductForm = () => {
                     }}
                   />
                 </Grid>
-                
-                <Grid item xs={12}>
+
+                <Grid item xs={12} size={12}>
                   <TextField
                     fullWidth
                     label="Description"
@@ -387,14 +423,14 @@ const ProductForm = () => {
                     value={formData.description}
                     onChange={handleChange}
                     multiline
-                    rows={4}
+                    rows={1}
                     variant="outlined"
                     placeholder="Enter product details, features, specifications, etc."
                   />
                 </Grid>
-              </Grid>
+              </Grid> 
             </StyledPaper>
-            
+
             <StyledPaper elevation={3}>
               <Grid container spacing={3}>
                 <Grid item xs={12}>
@@ -403,7 +439,7 @@ const ProductForm = () => {
                   </Typography>
                   <Divider sx={{ mb: 3 }} />
                 </Grid>
-                
+
                 <Grid item xs={12}>
                   <ImagePreviewContainer>
                     {imagePreview ? (
@@ -423,7 +459,7 @@ const ProductForm = () => {
                       </Box>
                     )}
                   </ImagePreviewContainer>
-                  
+
                   <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mt: 2 }}>
                     <Button
                       component="label"
@@ -439,17 +475,17 @@ const ProductForm = () => {
                         onChange={handleImageChange}
                       />
                     </Button>
-                    
+
                     {imagePreview && (
                       <Button variant="outlined" color="error" onClick={clearImage}>
                         Remove Image
                       </Button>
                     )}
-                    
-                    <Chip 
-                      label="Max file size: 5MB" 
-                      variant="outlined" 
-                      size="small" 
+
+                    <Chip
+                      label="Max file size: 5MB"
+                      variant="outlined"
+                      size="small"
                       color="default"
                       sx={{ ml: 'auto !important' }}
                     />
@@ -457,7 +493,7 @@ const ProductForm = () => {
                 </Grid>
               </Grid>
             </StyledPaper>
-            
+
             <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
               <ActionButton
                 component={Link}
@@ -468,7 +504,7 @@ const ProductForm = () => {
               >
                 Cancel
               </ActionButton>
-              
+
               <ActionButton
                 type="submit"
                 color="primary"
