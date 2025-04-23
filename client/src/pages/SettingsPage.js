@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Typography, TextField, Box, Button } from '@mui/material';
+import { Container, Typography, TextField, Box, Button, useMediaQuery } from '@mui/material';
 import { MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import { useSettings } from '../context/SettingsContext';
 import { Link } from 'react-router-dom';
@@ -9,6 +9,7 @@ import {
 
 const SettingsPage = () => {
     const { lowStockThreshold, setLowStockThreshold, currency, setCurrency, productName, setProductName } = useSettings();
+    const isMobile = useMediaQuery('(max-width:600px)'); // Check if the screen width is less than 600px
 
     const handleSave = () => {
         alert('Settings saved successfully!');
@@ -17,15 +18,13 @@ const SettingsPage = () => {
     const handleReset = () => {
         setLowStockThreshold(10); // Default low stock threshold
         setCurrency('$'); // Default currency
-        setProductName('Inventory Management'); // Default product name
+        setProductName('Inventora'); // Default product name
         alert('Settings reset to default values!');
     };
 
     return (
         <Container maxWidth="sm" sx={{ py: 4 }}>
-            <Typography variant="h4" component="h1" fontWeight={700} gutterBottom>
-                Settings
-            </Typography>
+            
             <Button
                 component={Link}
                 to="/"
@@ -35,6 +34,9 @@ const SettingsPage = () => {
             >
                 Back to Products
             </Button>
+            <Typography variant="h4" component="h1" fontWeight={700} gutterBottom>
+                Settings
+            </Typography>
             <Box sx={{ mt: 3 }}>
                 <Typography variant="h6" gutterBottom>
                     Low Stock Threshold
@@ -77,11 +79,18 @@ const SettingsPage = () => {
                     variant="outlined"
                     sx={{ mb: 3 }}
                 />
-                <Box sx={{ display: 'flex', gap: 2 }}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: isMobile ? 'column' : 'row',
+                        gap: 2,
+                    }}
+                >
                     <Button
                         variant="contained"
                         color="primary"
                         onClick={handleSave}
+                        fullWidth={isMobile}
                     >
                         Save Settings
                     </Button>
@@ -89,6 +98,7 @@ const SettingsPage = () => {
                         variant="outlined"
                         color="secondary"
                         onClick={handleReset}
+                        fullWidth={isMobile}
                     >
                         Reset to Default
                     </Button>

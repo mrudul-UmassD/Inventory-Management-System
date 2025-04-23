@@ -5,7 +5,7 @@ const SettingsContext = createContext();
 export const SettingsProvider = ({ children }) => {
     const [lowStockThreshold, setLowStockThreshold] = useState(10);
     const [currency, setCurrency] = useState('$'); // Add currency state
-    const [productName, setProductName] = useState('Inventory Management'); // Add currency state
+    const [productName, setProductName] = useState('Inventora'); // Add currency state
 
     return (
         <SettingsContext.Provider value={{ lowStockThreshold, setLowStockThreshold, currency, setCurrency, productName, setProductName }}>
