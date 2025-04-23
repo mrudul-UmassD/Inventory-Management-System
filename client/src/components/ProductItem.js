@@ -53,7 +53,7 @@ const ProductImage = styled(Avatar)(({ theme }) => ({
 }));
 
 const ProductItem = ({ product, onDelete }) => {
-  const { lowStockThreshold } = useSettings();
+  const { lowStockThreshold, currency } = useSettings(); // Access currency
 
   const handleDelete = (e) => {
     e.preventDefault();
@@ -121,7 +121,7 @@ const ProductItem = ({ product, onDelete }) => {
       </TableCell>
       <TableCell>
         <Typography fontWeight={600} color="primary.main">
-          ${product.price.toFixed(2)}
+          {currency}{product.price.toFixed(2)} {/* Use currency */}
         </Typography>
       </TableCell>
       <TableCell>

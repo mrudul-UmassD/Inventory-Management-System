@@ -11,10 +11,12 @@ import {
   useMediaQuery
 } from '@mui/material';
 import { Add as AddIcon, Inventory as InventoryIcon, Settings as SettingsIcon } from '@mui/icons-material';
+import { useSettings } from '../context/SettingsContext';
 
 const Header = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { productName } = useSettings(); // Access product name
 
   return (
     <AppBar position="static" elevation={3} sx={{ 
@@ -42,7 +44,7 @@ const Header = () => {
                 display: 'inline-flex'
               }}
             >
-              Inventory Management
+              {productName} {/* Use product name */}
             </Typography>
           </Link>
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import Header from './components/Header';
+import Footer from './components/Footer';
 import ProductList from './pages/ProductList';
 import ProductForm from './pages/ProductForm';
 import ProductDetail from './pages/ProductDetail';
@@ -156,6 +157,7 @@ function App() {
               <Route path="/products/:id" element={<ProductDetail />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Routes>
+            <Footer />
           </div>
         </Router>
       </ThemeProvider>
