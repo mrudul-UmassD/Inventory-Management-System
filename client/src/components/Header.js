@@ -10,7 +10,7 @@ import {
   useTheme,
   useMediaQuery
 } from '@mui/material';
-import { Add as AddIcon, Inventory as InventoryIcon } from '@mui/icons-material';
+import { Add as AddIcon, Inventory as InventoryIcon, Settings as SettingsIcon } from '@mui/icons-material';
 
 const Header = () => {
   const theme = useTheme();
@@ -46,7 +46,24 @@ const Header = () => {
             </Typography>
           </Link>
 
-          <Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Button
+              component={Link}
+              to="/settings"
+              variant="outlined"
+              startIcon={<SettingsIcon />}
+              sx={{
+                fontWeight: 600,
+                boxShadow: 1,
+                transition: 'all 0.2s',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: 3,
+                }
+              }}
+            >
+              Settings
+            </Button>
             <Button
               component={Link}
               to="/products/new"

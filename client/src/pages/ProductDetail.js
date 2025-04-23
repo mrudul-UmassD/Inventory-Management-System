@@ -226,7 +226,7 @@ const ProductDetail = () => {
           <StyledCard elevation={3}>
             <Grid container>
               {/* Product Image */}
-              <Grid item xs={12} md={6} sx={{ position: 'relative' }}>
+              <Grid item size={6} xs={12} md={6} sx={{ position: 'relative' }}>
                 <ProductImage
                   component="img"
                   image={product.image_url || defaultImage}

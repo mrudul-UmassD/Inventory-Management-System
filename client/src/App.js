@@ -5,6 +5,8 @@ import Header from './components/Header';
 import ProductList from './pages/ProductList';
 import ProductForm from './pages/ProductForm';
 import ProductDetail from './pages/ProductDetail';
+import SettingsPage from './pages/SettingsPage';
+import { SettingsProvider } from './context/SettingsContext';
 
 // Create a custom theme
 const theme = createTheme({
@@ -141,20 +143,23 @@ const theme = createTheme({
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <div className="App">
-          <Header />
-          <Routes>
-            <Route path="/" element={<ProductList />} />
-            <Route path="/products/new" element={<ProductForm />} />
-            <Route path="/products/edit/:id" element={<ProductForm />} />
-            <Route path="/products/:id" element={<ProductDetail />} />
-          </Routes>
-        </div>
-      </Router>
-    </ThemeProvider>
+    <SettingsProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <div className="App">
+            <Header />
+            <Routes>
+              <Route path="/" element={<ProductList />} />
+              <Route path="/products/new" element={<ProductForm />} />
+              <Route path="/products/edit/:id" element={<ProductForm />} />
+              <Route path="/products/:id" element={<ProductDetail />} />
+              <Route path="/settings" element={<SettingsPage />} />
+            </Routes>
+          </div>
+        </Router>
+      </ThemeProvider>
+    </SettingsProvider>
   );
 }
 

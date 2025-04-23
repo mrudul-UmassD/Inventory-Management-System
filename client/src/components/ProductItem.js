@@ -19,6 +19,7 @@ import {
   Warning, 
   Error 
 } from '@mui/icons-material';
+import { useSettings } from '../context/SettingsContext';
 
 // Styled components for animations and effects
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -52,6 +53,8 @@ const ProductImage = styled(Avatar)(({ theme }) => ({
 }));
 
 const ProductItem = ({ product, onDelete }) => {
+  const { lowStockThreshold } = useSettings();
+
   const handleDelete = (e) => {
     e.preventDefault();
     if (window.confirm(`Are you sure you want to delete ${product.name}?`)) {
@@ -64,7 +67,7 @@ const ProductItem = ({ product, onDelete }) => {
   
   // Quantity status configuration
   const getQuantityStatus = (qty) => {
-    if (qty > 10) {
+    if (qty > lowStockThreshold) {
       return {
         icon: <CheckCircle fontSize="small" />,
         label: 'In Stock',
