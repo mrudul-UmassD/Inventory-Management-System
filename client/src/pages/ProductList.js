@@ -26,7 +26,8 @@ import {
   styled,
   Divider,
   Stack,
-  Tooltip
+  Tooltip,
+  TableSortLabel
 } from '@mui/material';
 import { 
   CloudUpload, 
@@ -35,7 +36,8 @@ import {
   Upload, 
   InsertDriveFile,
   UploadFile,
-  CloudDownload
+  CloudDownload,
+  AutoGraph
 } from '@mui/icons-material';
 
 // Styled components
@@ -274,6 +276,16 @@ const ProductList = () => {
     }
   };
 
+  const handleSort = (field) => {
+    const isAsc = filters.sortBy === field && filters.sortOrder === 'asc';
+    setFilters({
+      ...filters,
+      sortBy: field,
+      sortOrder: isAsc ? 'desc' : 'asc',
+      page: 1 // Reset to first page on sort change
+    });
+  };
+
   return (
     <Container maxWidth="xl" sx={{ pb: 8 }}>
       <Fade in={true} timeout={800}>
@@ -293,6 +305,18 @@ const ProductList = () => {
                   startIcon={<Add />}
                 >
                   Add New
+                </StyledButton>
+              </Tooltip>
+
+              <Tooltip title="Add New Product" arrow placement="top">
+                <StyledButton
+                  component={Link}
+                  to="/products/data-vis"
+                  variant="contained"
+                  color="primary"
+                  startIcon={< AutoGraph />}
+                >
+                  Analyze Data
                 </StyledButton>
               </Tooltip>
               
@@ -439,8 +463,24 @@ const ProductList = () => {
                         <TableCell>Image</TableCell>
                         <TableCell>Name</TableCell>
                         <TableCell>Category</TableCell>
-                        <TableCell>Price</TableCell>
-                        <TableCell>Quantity</TableCell>
+                        <TableCell>
+                          <TableSortLabel
+                            active={filters.sortBy === 'price'}
+                            direction={filters.sortBy === 'price' ? filters.sortOrder : 'asc'}
+                            onClick={() => handleSort('price')}
+                          >
+                            Price
+                          </TableSortLabel>
+                        </TableCell>
+                        <TableCell>
+                          <TableSortLabel
+                            active={filters.sortBy === 'quantity'}
+                            direction={filters.sortBy === 'quantity' ? filters.sortOrder : 'asc'}
+                            onClick={() => handleSort('quantity')}
+                          >
+                            Quantity
+                          </TableSortLabel>
+                        </TableCell>
                         <TableCell align="right">Actions</TableCell>
                       </TableRow>
                     </TableHead>

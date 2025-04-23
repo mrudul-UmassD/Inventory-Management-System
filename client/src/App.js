@@ -7,6 +7,7 @@ import ProductList from './pages/ProductList';
 import ProductForm from './pages/ProductForm';
 import ProductDetail from './pages/ProductDetail';
 import SettingsPage from './pages/SettingsPage';
+import DataVis from './pages/DataVis';
 import { SettingsProvider } from './context/SettingsContext';
 
 // Create a custom theme
@@ -156,6 +157,7 @@ function App() {
               <Route path="/products/edit/:id" element={<ProductForm />} />
               <Route path="/products/:id" element={<ProductDetail />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/products/data-vis" element={<DataVis />} />
             </Routes>
             <Footer />
           </div>
