@@ -43,7 +43,6 @@ router.get('/export', async (req, res) => {
   try {
     // Fetch all products
     const products = await db.all('SELECT * FROM products');
-    console.log("!!!!!");
     // Set response headers for CSV download
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', `attachment; filename="products-export-${Date.now()}.csv"`);
@@ -61,8 +60,8 @@ router.get('/export', async (req, res) => {
         `"${escapeCsvValue(product.category || '')}"`,
         product.price,
         product.quantity,
-        product.created_at,
-        product.updated_at
+        `'${product.created_at}`,
+        `'${product.updated_at}`
       ].join(',');
       
       res.write(row + '\n');
