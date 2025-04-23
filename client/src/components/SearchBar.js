@@ -206,7 +206,7 @@ const SearchBar = ({ onSearch }) => {
               />
             </Grid>
             
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item size={4} xs={12} sm={6} md={3}>
               <FormControl fullWidth>
                 <InputLabel id="category-label">Category</InputLabel>
                 <Select
