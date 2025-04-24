@@ -37,7 +37,8 @@ import {
   InsertDriveFile,
   UploadFile,
   CloudDownload,
-  AutoGraph
+  AutoGraph,
+  Info // Add this import
 } from '@mui/icons-material';
 
 // Styled components
@@ -347,20 +348,77 @@ const ProductList = () => {
               <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} sm={6}>
                   <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
-                    <Button
-                      component="label"
-                      variant="outlined"
-                      startIcon={<UploadFile />}
-                      color="secondary"
-                    >
-                      Select CSV File
-                      <VisuallyHiddenInput 
-                        id="csv-upload" 
-                        type="file" 
-                        accept=".csv" 
-                        onChange={handleCsvFileChange} 
-                      />
-                    </Button>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Tooltip 
+                        title={
+                          <div>
+                            <Typography variant="caption" component="div">CSV Format Instructions:</Typography>
+                            <Typography variant="caption" component="div" sx={{ fontFamily: 'monospace', mt: 1 }}>
+                              name,description,category,price,quantity
+                            </Typography>
+                            <Typography variant="caption" component="div" sx={{ mt: 1 }}>
+                              • First row must contain the header columns as shown above
+                            </Typography>
+                            <Typography variant="caption" component="div">
+                              • Columns must be comma-separated
+                            </Typography>
+                            <Typography variant="caption" component="div">
+                              • Each product should be on a new line
+                            </Typography>
+                          </div>
+                        }
+                        arrow
+                        placement="top"
+                      >
+                        <Button
+                          component="label"
+                          variant="outlined"
+                          startIcon={<UploadFile />}
+                          color="secondary"
+                        >
+                          Select CSV File
+                          <VisuallyHiddenInput 
+                            id="csv-upload" 
+                            type="file" 
+                            accept=".csv" 
+                            onChange={handleCsvFileChange} 
+                          />
+                        </Button>
+                      </Tooltip>
+                      
+                      <Tooltip 
+                        title={
+                          <div>
+                            <Typography variant="caption" component="div">CSV Format Instructions:</Typography>
+                            <Typography variant="caption" component="div" sx={{ fontFamily: 'monospace', mt: 1 }}>
+                              name,description,category,price,quantity
+                            </Typography>
+                            <Typography variant="caption" component="div" sx={{ mt: 1 }}>
+                              • First row must contain the header columns as shown above
+                            </Typography>
+                            <Typography variant="caption" component="div">
+                              • Columns must be comma-separated
+                            </Typography>
+                            <Typography variant="caption" component="div">
+                              • Each product should be on a new line
+                            </Typography>
+                          </div>
+                        }
+                        arrow
+                        placement="top"
+                      >
+                        
+                    
+                    
+                  <Button
+                          size="small"
+                          sx={{ minWidth: 0, p: 1 }}
+                          color="info"
+                        >
+                          <Info fontSize="small" />
+                        </Button>
+                      </Tooltip>
+                    </Box>
                     
                     {csvFile && (
                       <Box sx={{ 
@@ -382,16 +440,19 @@ const ProductList = () => {
                 </Grid>
                 
                 <Grid item xs={12} sm={6}>
-                  <StyledButton
-                    variant="contained"
-                    color="secondary"
-                    onClick={handleBulkImport}
-                    disabled={!csvFile || loading}
-                    startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <CloudUpload />}
-                    fullWidth={false}
-                  >
-                    {loading ? 'Importing...' : 'Import Products'}
-                  </StyledButton>
+                  
+                    <span>
+                      <StyledButton
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleBulkImport}
+                        disabled={!csvFile || loading}
+                        startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <CloudUpload />}
+                        fullWidth={false}
+                      >
+                        {loading ? 'Importing...' : 'Import Products'}
+                      </StyledButton>
+                    </span>
                 </Grid>
                 
                 {importStatus && (
