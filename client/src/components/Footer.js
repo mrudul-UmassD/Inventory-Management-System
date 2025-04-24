@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Container, Link } from '@mui/material';
+import { Box, Typography, Container, Link, Divider } from '@mui/material';
 import { useSettings } from '../context/SettingsContext';
 
 const Footer = () => {
@@ -17,16 +17,9 @@ const Footer = () => {
         >
             <Container maxWidth="lg">
                 <Typography variant="body2" color="text.secondary" align="center">
-                    © {new Date().getFullYear()} {productName}. All rights reserved.
-                </Typography>
-                <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 1 }}>
-                    <Link href="/privacy-policy" color="inherit" underline="hover">
-                        Privacy Policy
-                    </Link>{' '}
-                    |{' '}
-                    <Link href="/terms-of-service" color="inherit" underline="hover">
-                        Terms of Service
-                    </Link>
+                 Product: {productName}. 
+                 <Divider sx={{ my: 2 }} />
+                 Developed by: Aditya Sahu and Mrudul Panchal.
                 </Typography>
             </Container>
         </Box>
