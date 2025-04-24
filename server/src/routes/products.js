@@ -30,11 +30,29 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+
+// File filter for csv
+const csvFilter = (req, file, cb) => {
+  // Accept only csv
+  if (file.mimetype.startsWith('text/csv')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only CSV files are allowed'), false);
+  }
+};
+
 const upload = multer({ 
   storage: storage,
   fileFilter: fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
+
+const uploadCsv = multer({ 
+  storage: storage,
+  fileFilter: csvFilter,
+  limits: { fileSize: 5 * 1024 * 1024 * 10 } // 50MB limit
+});
+
 
 
 
@@ -348,7 +366,7 @@ router.get('/categories/all', async (req, res) => {
 });
 
 // Bulk import products from CSV
-router.post('/bulk-import', upload.single('file'), async (req, res) => {
+router.post('/bulk-import', uploadCsv.single('file'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'CSV file is required' });
   }
